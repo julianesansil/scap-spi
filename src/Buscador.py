@@ -4,15 +4,17 @@ Created on 29/09/2015
 @author: Juliane
 '''
 
-import os
 import pickle
+from Util import Util
 
 class Buscador():
+    
+    def __init__(self):
+        self.util = Util()
 
     def indexarConsulta(self, indexadorConsulta, arquivoParaConsultar, dicionarioConsulta):
         dicionarioConsulta = indexadorConsulta.separarEmNGrams(arquivoParaConsultar, dicionarioConsulta, indexadorConsulta.n)
         dicionarioConsulta = indexadorConsulta.recuperarLNGrams(dicionarioConsulta)
-        indexadorConsulta.salvarPerfil(dicionarioConsulta, indexadorConsulta.getNomeAutor(arquivoParaConsultar))
         return dicionarioConsulta
 
     def recuperarArquivoIndexado(self, arquivo):
@@ -24,8 +26,3 @@ class Buscador():
         diferencaNGrams = set(dicionarioConsulta.keys()) - set(dicionarioTemp.keys())
         qtdeSemelhancas = len(dicionarioConsulta.keys()) - len(diferencaNGrams)
         return qtdeSemelhancas
-
-    def getNomeAutor(self, arquivo):
-        nomeArquivo = [os.path.basename(arquivo)]
-        nomeAutor = nomeArquivo[0][0:nomeArquivo[0].find("-")]
-        return nomeAutor

@@ -64,30 +64,17 @@ for arquivoRetirado in arquivosBase:
     dicionarioConsulta = {}
     dicionarioConsulta = buscador.indexarConsulta(indexadorConsulta, arquivoParaConsultar, dicionarioConsulta)
 
-    print "Arquivo consulta..."
-    for key, value in dicionarioConsulta.iteritems():
-        print "%s: %s" % (key, value)
-    print "**************************"
-    print "Quantidade de termos: %s" % (len(dicionarioConsulta))
-    print "*************************************************\n"
-
     arquivosDosIndices = glob.glob(dirDosIndices + "*" + extensaoDosIndices)
     maiorSemelhancas = 0
     qtdeSemelhancas = 0
     
     for arquivo in arquivosDosIndices:
         dicionarioTemp = buscador.recuperarArquivoIndexado(arquivo)
-        print "Arquivo..."
-        for key, value in dicionarioTemp.iteritems():
-            print "%s: %s" % (key, value)
     
         qtdeSemelhancas = buscador.getQtdeSemelhancas(dicionarioConsulta, dicionarioTemp)
         if (qtdeSemelhancas > maiorSemelhancas):
             maiorSemelhancas = qtdeSemelhancas
             autor = arquivo
-        print "**************************"
-        print "Semelhancas: %s" % (qtdeSemelhancas)
-        print "*************************************************\n"
     
     print "Autor Verdadeiro: %s" % (autorVerdadeiro)
     print "Autor: %s\n\n" % (util.getNomeAutor(autor))

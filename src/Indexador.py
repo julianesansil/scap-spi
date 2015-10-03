@@ -67,8 +67,3 @@ class Indexador():
     def getStringDeArquivo(self, arquivo):
         arquivoString = open(arquivo).read()
         return arquivoString
-    
-    def getNomeAutor(self, arquivo):
-        nomeArquivo = [os.path.basename(arquivo)]
-        nomeAutor = nomeArquivo[0][0:nomeArquivo[0].find("-")]
-        return nomeAutor

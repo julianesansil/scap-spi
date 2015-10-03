@@ -1,10 +1,12 @@
 
+import glob
 from Indexador import Indexador
 from Buscador import Buscador
-import glob
+from Util import Util
 
 # Informacao dos codigos
 extensaoAceita = ".java"
+util = Util()
 
 # Informacoes para indexacao
 dirDosIndices = "C:/Users/Juliane/Dropbox/TCC/SCAP-Codigo/util/indices/"
@@ -30,16 +32,15 @@ indexadorConsulta = Indexador(dirDosIndicesConsulta, extensaoDosIndices, dirPara
 buscador = Buscador()
 
 
-
+#INDEXACAO
 arquivosDosIndices = glob.glob(dirDosIndices + "*" + extensaoDosIndices)
 arquivosParaIndexar = glob.glob(dirParaIndexar + "*" + extensaoAceita)
 
-#INDEXACAO
 for arquivo in arquivosParaIndexar:
-    dicionario = indexador.recuperarPerfil(indexador.getNomeAutor(arquivo))
+    dicionario = indexador.recuperarPerfil(util.getNomeAutor(arquivo))
     dicionario = indexador.separarEmNGrams(arquivo, dicionario, n)
     dicionario = indexador.recuperarLNGrams(dicionario)
-    indexador.salvarPerfil(dicionario, indexador.getNomeAutor(arquivo))
+    indexador.salvarPerfil(dicionario, util.getNomeAutor(arquivo))
 
     
 #CONSULTA
@@ -70,4 +71,4 @@ for arquivo in arquivosDosIndices:
     print "Semelhancas: %s" % (qtdeSemelhancas)
     print "*************************************************\n"
 
-print "\nAutor: %s" % (buscador.getNomeAutor(autor))
+print "\nAutor: %s" % (util.getNomeAutor(autor))
