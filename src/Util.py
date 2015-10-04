@@ -12,16 +12,14 @@ class Util():
     @staticmethod
     def getNomeAutor(arquivo):
         nomeArquivo = [os.path.basename(arquivo)]
-        nomeAutor = nomeArquivo[0][0:nomeArquivo[0].find("-")]
+        nomeAutor = nomeArquivo[0][0:2]
         return nomeAutor
-
 
     @staticmethod
     def getNomeAutorTxt(arquivo):
         nomeArquivo = [os.path.basename(arquivo)]
         nomeAutor = nomeArquivo[0][0:nomeArquivo[0].find(".")]
         return nomeAutor
-
 
     @staticmethod
     def getNomeArquivo(arquivo):

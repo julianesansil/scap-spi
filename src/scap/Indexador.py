@@ -7,8 +7,10 @@ Created on 20/09/2015
 import glob
 import os
 import pickle
+import time
 import config
 from Util import Util
+from fileinput import close
 
 
 class Indexador():
@@ -38,7 +40,9 @@ class Indexador():
         dicionario = {}
         
         if (self.existePerfil(nomeAutor)):
-            dicionario = pickle.load(open(self.dirDosIndices + nomeAutor + self.extensaoDosIndices, "rb"))
+            f = open(self.dirDosIndices + nomeAutor + self.extensaoDosIndices, "rb")
+            dicionario = pickle.load(f)
+            f.close()
         
         return dict(dicionario)
 
@@ -74,7 +78,9 @@ class Indexador():
 
     # Salva o perfil do autor indexado como um dicionario num arquivo pickle
     def salvarPerfil(self, dicionario, nomeAutor):
-        pickle.dump(dicionario, open(self.dirDosIndices + nomeAutor + self.extensaoDosIndices, "wb"))
+        f = open(self.dirDosIndices + nomeAutor + self.extensaoDosIndices, "wb")
+        pickle.dump(dicionario, f)
+        f.close()
 
 
     # Verifica se determinado perfil ja existe
@@ -86,9 +92,11 @@ class Indexador():
         arquivosIndexados = glob.glob(self.dirDosIndices + "*" + self.extensaoDosIndices)
         
         for arquivo in arquivosIndexados:
-            dicionario = pickle.load(open(arquivo, "rb"))
+            f = open(arquivo, "rb")
+            dicionario = pickle.load(f)
+            f.close()
             
-            for key, value in dicionario.iteritems():
+            for key, value in sorted(dicionario.iteritems(), key=lambda (k, v): v, reverse=True):
                 print "%s: %s" % (key, value)
             print "**************************"
             print "Quantidade de termos: %s" % (len(dicionario))

@@ -28,6 +28,7 @@ class Buscador():
         autorScap = ""
         
         for arquivoRetirado in arquivosBase:
+            print arquivoRetirado
             autorVerdadeiro = Util.getNomeAutor(arquivoRetirado)
             self.reindexarPerfil(arquivoRetirado, dirParaConsultar, indexadorBase)
                         
@@ -71,7 +72,7 @@ class Buscador():
         # Move o arquivo-consulta da pasta base para a de consulta
         shutil.move(arquivoConsulta, dirParaConsultar)
     
-        # Exclui o perfil indexado (se houver) do autor do arquivo-consulta
+        # Exclui o perfil indexado do autor do arquivo-consulta (se houver) da pasta de indices
         Util.excluirArquivo(self.dirDosIndices + Util.getNomeAutor(arquivoConsulta) + self.extensaoDosIndices)
         # Re-indexa somente os arquivos deste autor
         indexadorBase.indexar(self.dirParaIndexar, Util.getNomeAutor(arquivoConsulta) + "*" + self.extensaoAceita)
@@ -89,7 +90,10 @@ class Buscador():
 
     # Recupera o dicionario do arquivo pickle passado
     def recuperarArquivoIndexado(self, arquivo):
-        return dict(pickle.load(open(arquivo, "rb")))
+        f = open(arquivo, "rb")
+        dicionario = dict(pickle.load(f))
+        f.close()
+        return dicionario
 
 
     # Retorna a quantidade de semelhancas de n-grams que tem 2 arquivos
