@@ -10,21 +10,23 @@ import os
 class Util():
 
     @staticmethod
-    def getNomeAutor(arquivo):
-        nomeArquivo = [os.path.basename(arquivo)]
-        nomeAutor = nomeArquivo[0][0:2]
-        return nomeAutor
-
-    @staticmethod
-    def getNomeAutorTxt(arquivo):
-        nomeArquivo = [os.path.basename(arquivo)]
-        nomeAutor = nomeArquivo[0][0:nomeArquivo[0].find(".")]
-        return nomeAutor
-
-    @staticmethod
     def getNomeArquivo(arquivo):
         nomeArquivo = [os.path.basename(arquivo)]
         return nomeArquivo[0]
+
+
+    @staticmethod
+    def getNomeAutor(arquivo):
+        nomeArquivo = Util.getNomeArquivo(arquivo)
+        nomeAutor = nomeArquivo[0:2]
+        return nomeAutor
+
+
+    @staticmethod
+    def getNomeAutorTxt(arquivo):
+        nomeArquivo = Util.getNomeArquivo(arquivo)
+        nomeAutor = nomeArquivo[0:nomeArquivo.find(".")]
+        return nomeAutor
 
 
     @staticmethod
@@ -38,3 +40,10 @@ class Util():
     def getStringDeArquivo(arquivo):
         arquivoString = open(arquivo).read()
         return arquivoString
+
+
+    @staticmethod
+    def esvaziarDiretorio(diretorio):
+        for raiz, diretorios, arquivos in os.walk(diretorio):
+            for arquivo in arquivos:
+                Util.excluirArquivo(raiz + arquivo)

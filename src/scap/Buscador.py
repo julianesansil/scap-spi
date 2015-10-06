@@ -6,86 +6,37 @@ Created on 29/09/2015
 
 import glob
 import pickle
-import shutil
 import config
 from Util import Util
 
 
 class Buscador():
-    
+
     def __init__(self):
-        self.extensaoAceita = config.extensaoAceita
-        self.dirParaIndexar = config.dirParaIndexar
         self.dirDosIndices = config.dirDosIndices
         self.extensaoDosIndices = config.extensaoDosIndices
 
-    
-    def consultar(self, arquivosBase, indexadorBase, dirParaConsultar, indexadorConsulta):
-        # Informacoes do experimento
-        numExperimentos = 0
-        numAcertos = 0
-        autorVerdadeiro = ""
-        autorScap = ""
+
+    # Compara o arquivo-consulta com os demais arquivos da base
+    # E retorna o autor com maior semelhancas de n-grams comparado ao arquivo-consulta
+    def compararComTodosDaBase(self, arquivoConsulta, indexadorConsulta):
+        dicionarioConsulta = {}
+        dicionarioConsulta = indexadorConsulta.indexarArquivo(arquivoConsulta, dicionarioConsulta)
         
-        for arquivoRetirado in arquivosBase:
-            print arquivoRetirado
-            autorVerdadeiro = Util.getNomeAutor(arquivoRetirado)
-            self.reindexarPerfil(arquivoRetirado, dirParaConsultar, indexadorBase)
-                        
-            # Informacoes da consulta
-            arquivoConsulta = dirParaConsultar + Util.getNomeArquivo(arquivoRetirado)
-            dicionarioConsulta = {}
-            dicionarioConsulta = self.indexarConsulta(indexadorConsulta, arquivoConsulta)
+        arquivosDosIndices = glob.glob(self.dirDosIndices + "*" + self.extensaoDosIndices)
+        autor = ""
+        maiorSemelhancas = 0
+        qtdeSemelhancas = 0
         
-            arquivosDosIndices = glob.glob(self.dirDosIndices + "*" + self.extensaoDosIndices)
-            maiorSemelhancas = 0
-            qtdeSemelhancas = 0
+        for arquivo in arquivosDosIndices:
+            dicionarioTemp = self.recuperarArquivoIndexado(arquivo)
+            qtdeSemelhancas = self.getQtdeSemelhancas(dicionarioConsulta, dicionarioTemp)
             
-            # Compara determinado arquivo com o arquivo-consulta
-            for arquivo in arquivosDosIndices:
-                dicionarioTemp = self.recuperarArquivoIndexado(arquivo)
-            
-                qtdeSemelhancas = self.getQtdeSemelhancas(dicionarioConsulta, dicionarioTemp)
-                if (qtdeSemelhancas > maiorSemelhancas):
-                    maiorSemelhancas = qtdeSemelhancas
-                    autor = arquivo
-            
-            # Retorna o arquivo retirado para a pasta das bases
-            shutil.move(arquivoConsulta, self.dirParaIndexar)
-         
-            autorScap = Util.getNomeAutorTxt(autor)
-            print "Autor Verdadeiro: %s" % (autorVerdadeiro)
-            print "Autor: %s" % (autorScap)
+            if (qtdeSemelhancas > maiorSemelhancas):
+                maiorSemelhancas = qtdeSemelhancas
+                autor = arquivo
         
-            numExperimentos += 1
-            if (autorVerdadeiro == autorScap):
-                numAcertos += 1
-        
-            acuracia = numAcertos/float(numExperimentos)
-            print "Numero de experimentos: %s" % (numExperimentos)
-            print "Numero de acertos: %s" % (numAcertos)
-            print "Acuracia: %f\n" % (acuracia)
-
-
-    # Re-indexa somente os arquivos do autor do arquivo-consulta
-    def reindexarPerfil(self, arquivoConsulta, dirParaConsultar, indexadorBase):
-        # Move o arquivo-consulta da pasta base para a de consulta
-        shutil.move(arquivoConsulta, dirParaConsultar)
-    
-        # Exclui o perfil indexado do autor do arquivo-consulta (se houver) da pasta de indices
-        Util.excluirArquivo(self.dirDosIndices + Util.getNomeAutor(arquivoConsulta) + self.extensaoDosIndices)
-        # Re-indexa somente os arquivos deste autor
-        indexadorBase.indexar(self.dirParaIndexar, Util.getNomeAutor(arquivoConsulta) + "*" + self.extensaoAceita)
-
-
-    # Indexa o arquivo de consulta de acordo com as regras do algoritmo scap
-    def indexarConsulta(self, indexadorConsulta, arquivoParaConsultar):
-        dicionario = {}
-        dicionario = indexadorConsulta.separarEmNGrams(arquivoParaConsultar, dicionario)
-        dicionario = indexadorConsulta.recuperarLNGrams(dicionario)
-        indexadorConsulta.salvarPerfil(dicionario, Util.getNomeAutor(arquivoParaConsultar))
-        
-        return dicionario
+        return Util.getNomeAutorTxt(autor)
 
 
     # Recupera o dicionario do arquivo pickle passado
