@@ -1,6 +1,6 @@
+
 '''
 Created on 20/09/2015
-
 @author: Juliane
 '''
 
@@ -11,8 +11,8 @@ class Util():
 
     @staticmethod
     def getNomeArquivo(arquivo):
-        nomeArquivo = [os.path.basename(arquivo)]
-        return nomeArquivo[0]
+        nomeArquivo = [os.path.basename(arquivo)][0]
+        return nomeArquivo
 
 
     @staticmethod
@@ -38,7 +38,10 @@ class Util():
     # Le e recupera toda a string do arquivo
     @staticmethod
     def getStringDeArquivo(arquivo):
-        arquivoString = open(arquivo).read()
+        f = open(arquivo)
+        arquivoString = f.read().decode("utf-8-sig").encode("utf-8")
+        f.close()
+        
         return arquivoString
 
 
