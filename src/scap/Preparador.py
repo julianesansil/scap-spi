@@ -69,7 +69,7 @@ class Preparador():
         # Vai de 0 ate o tamanho da entrada - n+1
         for i in range(len(stringArquivo) - self.n + 1):
             nGram  = "".join(stringArquivo[i : i + self.n])
-            nGram = nGram.replace(" ", "รง")
+            nGram = nGram.replace(" ", "ç")
             listNGramsArquivo.append(nGram)
             listNGramsArquivo.append(" ")
 

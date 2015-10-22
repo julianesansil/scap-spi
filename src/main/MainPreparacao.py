@@ -8,7 +8,7 @@ from Util import Util
 
 preparador = Preparador(config.dirNGrams, config.extensaoPadrao, config.n, True)
 
-# Antes de iniciar a preparacao dos arquivos, esvazia o diretorio onde os n-grams ficarao
+# Antes de iniciar, esvazia o diretorio onde os n-grams ficarao
 Util.esvaziarDiretorio(config.dirNGrams)
 
 # Recupera e salva as caracteristicas relevantes dos arquivos para posterior indexacao
