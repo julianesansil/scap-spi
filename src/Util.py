@@ -1,18 +1,17 @@
+
 '''
 Created on 20/09/2015
-
 @author: Juliane
 '''
 
-import os
+import os, pickle
 
 
 class Util():
 
     @staticmethod
     def getNomeArquivo(arquivo):
-        nomeArquivo = [os.path.basename(arquivo)]
-        return nomeArquivo[0]
+        return [os.path.basename(arquivo)][0]
 
 
     @staticmethod
@@ -30,20 +29,43 @@ class Util():
 
 
     @staticmethod
+    def salvarArquivo(arquivo, conteudo):
+        with open(arquivo, "wb") as f:
+            f.write(str(conteudo))
+
+
+    @staticmethod
+    def salvarArquivoPickle(arquivo, conteudo):
+        with open(arquivo, "wb") as f:
+            pickle.dump(conteudo, f)
+
+
+    @staticmethod
+    def lerArquivo(arquivo):
+        with open(arquivo, "rb") as f:
+            # Le com LF, CR
+            return f.read()
+
+            # Le sem LF, CR
+            #string = "".join(f.readlines())
+            #string = string.replace("\n", " ").replace("\r", "")
+            #return string
+
+
+    @staticmethod
+    def lerArquivoPickle(arquivo):
+        with open(arquivo, "rb") as f:
+            return dict(pickle.load(f))
+
+
+    @staticmethod
     def excluirArquivo(arquivo):
         if (os.path.isfile(arquivo)):
             os.remove(arquivo)
 
 
-    # Le e recupera toda a string do arquivo
-    @staticmethod
-    def getStringDeArquivo(arquivo):
-        arquivoString = open(arquivo).read()
-        return arquivoString
-
-
     @staticmethod
     def esvaziarDiretorio(diretorio):
-        for raiz, diretorios, arquivos in os.walk(diretorio):
-            for arquivo in arquivos:
-                Util.excluirArquivo(raiz + arquivo)
+        for arquivo in os.listdir(diretorio):
+            arquivo = os.path.join(diretorio, arquivo)
+            Util.excluirArquivo(arquivo)
