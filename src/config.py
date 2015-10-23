@@ -1,22 +1,17 @@
 
-# Informacoes do algoritmo
-extensaoAceita = ""         # Arquivos permitidos de serem preparados
-extensaoPadrao = ".txt"     # Extensao utilizada para salvar os arquivos (n-grams, indices)
-L = 2000                    # Tamanho L (quantidade de termos pra consulta)
-n = 6                       # Tamanho n do n-grams (tamanho do termo)
+# Informacoes para o algoritmo
+n = [6, 10, 14]             # Tamanho n do n-gram = tamanho do termo
+L = [0, 2000]               # Tamanho L = quantidade de termos analisados
+comConsultaRetirada = True  # Retira ou nao o arquivo-consulta da base na comparacao
+comQuebraLinha = False      # Considera ou nao as quebras de linha (LF, CR) na leitura do arquivo
 
-# Informacoes para preparacao do documento
-dirParaPreparar = "C:/Users/Juliane/Dropbox/TCC/Codigo/util/base/b1/"
-dirNGrams = "C:/Users/Juliane/Dropbox/TCC/Codigo/util/n-grams/"
+# Extensao e diretorios utilizados na preparacao, indexacao e consulta dos arquivos
+extensaoAceita = ""
+#dirBase = ["C:/Users/Juliane/Dropbox/TCC/Codigo/util/base/b1/", "C:/Users/Juliane/Dropbox/TCC/Codigo/util/base/b2/", "C:/Users/Juliane/Dropbox/TCC/Codigo/util/base/b3/"]
+dirBase = "C:/Users/Juliane/Dropbox/TCC/Codigo/util/base/b1/"
+dirBasePreparada = "C:/Users/Juliane/Dropbox/TCC/Codigo/util/n-grams/"
 
-# Informacoes para indexacao
-dirParaIndexar = dirNGrams
-dirIndices = "C:/Users/Juliane/Dropbox/TCC/Codigo/util/indices/"
+# Extensao e diretorios utilizados para salvar os resultados e os testes
+extensaoParaSalvar = ".txt"
+dirResultados = "C:/Users/Juliane/Dropbox/TCC/Codigo/util/resultados/com_consulta_retirada/sem_lf_cr"
 dirIndicesValidacao = "C:/Users/Juliane/Dropbox/TCC/Codigo/util/indices-validacao/"
-
-# Informacoes para consulta
-dirParaConsultar = "C:/Users/Juliane/Dropbox/TCC/Codigo/util/consulta/"
-# dirIndicesConsulta = "C:/Users/Juliane/Dropbox/TCC/SCAP-Codigo/util/indices-consulta/"
-
-# Informacoes do resultado
-dirResultados = "C:/Users/Juliane/Dropbox/TCC/Codigo/util/resultados/com_lf_cr"

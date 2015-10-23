@@ -5,41 +5,45 @@ Created on 20/09/2015
 '''
 
 import itertools, glob, os
-import config
 from collections import Counter, OrderedDict
 from Util import Util
 
 
 class Indexador():
 
-    def __init__(self, preparador, dirIndices, extensaoIndices, L, comTermos1Ocorrencia):
+    def __init__(self, preparador, L, comTermos1Ocorrencia):
         self.preparador = preparador
-        self.dirIndices = dirIndices
-        self.extensaoIndices = extensaoIndices
         self.L = L
         self.comTermos1Ocorrencia = comTermos1Ocorrencia
 
 
-    # Indexa os arquivos do caminho passado de acordo com as regras do algoritmo scap
-    # comL = considera ou desconsidera o L para indexacao
-    def indexarDiretorio(self, pathParaIndexar):
-        arquivosNGrams = glob.glob(pathParaIndexar)
-        dictPerfilAutor = self.preparador.recuperarNGramsPorAutor(arquivosNGrams)   # {"autor", "nGramsAutor"} => {"autor", "vocabularioAutorIndexado"}
+    # Indexa o diretorio passado
+    def indexarDiretorio(self, dirParaIndexar):
+        arquivosNGrams = glob.glob(dirParaIndexar)
+        return self.indexarArquivos(arquivosNGrams)
+
+
+    # Retira o arquivoRetirar do diretorio passado para, em seguida, indexa-lo
+    def indexarDiretorioSemArquivoEspecifico(self, dirParaIndexar, arquivoParaRetirar):
+        arquivosNGrams = glob.glob(dirParaIndexar)
+        arquivosNGrams.remove(arquivoParaRetirar)
+        return self.indexarArquivos(arquivosNGrams)
+
+
+    # Indexa os arquivos de acordo com as regras do algoritmo scap
+    def indexarArquivos(self, arquivos):
+        dictPerfilAutores = self.preparador.recuperarNGramsPorAutor(arquivos)   # {"autor", "nGramsAutor"} => {"autor", "vocabularioAutorIndexado"}
         
-        for autor, nGramsAutor in dictPerfilAutor.iteritems():
+        for autor, nGramsAutor in dictPerfilAutores.iteritems():
             # Atualiza o dicionario de autores com o vocabulario indexado do autor
-            dictPerfilAutor[autor] = self.indexarNGrams(nGramsAutor)
+            dictPerfilAutores[autor] = self.indexarNGrams(nGramsAutor)
         
-        for autor, vocabularioAutorIndexado in dictPerfilAutor.iteritems():
-            #imprimir dictPerfilAutor
-            #salvar dictPerfilAutor num arquivo
+        for autor, vocabularioAutorIndexado in dictPerfilAutores.iteritems():
             if (self.L > 0):
                 # Atualiza o dicionario de autores com os L n-grams mais frequentes
-                dictPerfilAutor[autor] = self.recuperarLNGrams(vocabularioAutorIndexado, self.L)
-            self.salvarPerfilAutor(autor, dictPerfilAutor[autor])
-            self.salvarDiretorioIndexado(config.dirIndicesValidacao)
+                dictPerfilAutores[autor] = self.recuperarLNGrams(vocabularioAutorIndexado, self.L)
         
-        return dictPerfilAutor
+        return dictPerfilAutores
 
 
     # Indexa o arquivo passado de acordo com as regras do algoritmo scap
@@ -52,21 +56,24 @@ class Indexador():
             return self.recuperarLNGrams(vocabularioIndexado, self.L)
         else: return vocabularioIndexado
 
+
     # Indexa o vocabulario extraido dos n-grams
     # Ou seja, associa o n-gram a sua respectiva frequencia nos n-grams
     def indexarNGrams(self, nGrams):
         listNGrams = nGrams.split(" ")              # A cada espaco encontrado, 1 n-gram e recuperado
+        listNGrams.remove("")
         vocabularioIndexado = Counter(listNGrams)   # {"nGram" : "frequenciaNGram"}
         
-        # Se (comTermos1Ocorrencia = True), retira os termos com 1 ocorrencia do dicionario
+        # Se (comTermos1Ocorrencia = True), retira os termos com 1 ocorrencia do vocabulario
         if not (self.comTermos1Ocorrencia):
-            dictSemTermo1Ocorrencia = {}
+            vocabularioSemTermo1Ocorrencia = {}
+            vocabularioSemTermo1Ocorrencia.update(vocabularioIndexado)
             
             for nGram, frequenciaNGram in vocabularioIndexado.iteritems():
-                if (frequenciaNGram != 1):
-                    dictSemTermo1Ocorrencia[nGram] = vocabularioIndexado[nGram]
+                if (frequenciaNGram == 1):
+                    del vocabularioSemTermo1Ocorrencia[nGram]
 
-            return dictSemTermo1Ocorrencia
+            return vocabularioSemTermo1Ocorrencia
         
         return vocabularioIndexado
 
@@ -77,37 +84,23 @@ class Indexador():
         return dict(itertools.islice(dicionario.iteritems(), L))
 
 
-    # Salva o perfil do autor (vocabulario indexado) num arquivo pickle
-    def salvarPerfilAutor(self, autor, vocabularioAutorIndexado):
-        Util.salvarArquivoPickle(os.path.join(self.dirIndices, autor + self.extensaoIndices), vocabularioAutorIndexado)
-
-
-    # Recupera o perfil do autor (vocabulario indexado) do arquivo pickle passado
-    def recuperarPerfilAutor(self, arquivo):
-        return Util.lerArquivoPickle(arquivo)
-
-
-    def imprimirDiretorioIndexado(self):
-        arquivosIndexados = glob.glob(self.dirIndices + "*" + self.extensaoIndices)
-        
-        for arquivo in arquivosIndexados:
-            print "\n******************************************************************************"
-            print "Arquivo: ", arquivo
+    def imprimirPerfilAutores(self, dictPerfilAutores):
+        for autor, vocabularioAutorIndexado in dictPerfilAutores.iteritems():
+            print "******************************************************************************"
+            print "Autor:", autor
             print "**************************"
-            vocabularioAutorIndexado = self.recuperarPerfilAutor(arquivo)
             
             for nGram, frequenciaNGram in sorted(vocabularioAutorIndexado.iteritems(), key=lambda (k, v): v, reverse=True):
                 print nGram, " : ", frequenciaNGram
+            
             print "**************************"
             print "Quantidade de termos: ", len(vocabularioAutorIndexado)
-            print "******************************************************************************\n"
+            print "******************************************************************************\n\n"
 
 
-    def salvarDiretorioIndexado(self, dirIndicesValidacao):
-        arquivosIndexados = glob.glob(self.dirIndices + "*" + self.extensaoIndices)
-        
-        for arquivo in arquivosIndexados:
-            vocabularioAutorIndexado = self.recuperarPerfilAutor(arquivo)
+
+    def salvarValidacaoIndices(self, dirIndicesValidacao, dictPerfilAutores, extensaoParaSalvar):
+        for autor, vocabularioAutorIndexado in dictPerfilAutores.iteritems():
             stringArquivo = []
 
             qtdeTermos1Ocorrencia = 0
@@ -125,4 +118,4 @@ class Indexador():
             stringArquivo.append("\r\nPorcentagem dos termos com 1 ocorrencia: " + str(percentTermos1Ocorrencia) + "%")
                                      
             stringPerfilAutor = "".join(stringArquivo)
-            Util.salvarArquivo(os.path.join(dirIndicesValidacao, Util.getNomeAutor(arquivo) + self.extensaoIndices), stringPerfilAutor)
+            Util.salvarArquivo(os.path.join(dirIndicesValidacao, autor + extensaoParaSalvar), stringPerfilAutor)

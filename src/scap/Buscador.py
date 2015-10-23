@@ -4,9 +4,6 @@ Created on 29/09/2015
 @author: Juliane
 '''
 
-import glob, os
-from Util import Util
-
 
 class Buscador():
 
@@ -15,31 +12,32 @@ class Buscador():
         self.L = L
 
 
-    # Compara o arquivo-consulta com os demais arquivos da base
-    # E retorna o autor com maior semelhancas de n-grams comparado ao arquivo-consulta
-    def compararComTodosDaBase(self, arquivoConsulta):
-        dictConsulta = self.indexador.indexarArquivo(arquivoConsulta)
+    # Compara o vocabulario indexado do arquivo-consulta com os demais da base
+    # E retorna o autor com maior numero de semelhancas de n-grams
+    def compararComTodosDaBase(self, arquivoConsulta, dictPerfilAutor):
+        vocabularioConsultaIndexado = self.indexador.indexarArquivo(arquivoConsulta)
+        #print "vocabulario consulta: ", vocabularioConsultaIndexado
         
-        arquivosIndices = glob.glob(os.path.join(self.indexador.dirIndices, "*" + self.indexador.extensaoIndices))
-        autor = ""
-        maiorSemelhancas = 0
+        autorScap = ""
         qtdeSemelhancas = 0
+        maiorSemelhancas = 0
         
-        for arquivo in arquivosIndices:
-            dictTemp = self.indexador.recuperarPerfilAutor(arquivo)
-            qtdeSemelhancas = self.getQtdeSemelhancas(dictConsulta, dictTemp)
+        for autor, vocabularioAutorIndexado in dictPerfilAutor.iteritems():
+            #print "vocabulario autor: ", vocabularioAutorIndexado
+            qtdeSemelhancas = self.getQtdeSemelhancas(vocabularioConsultaIndexado, vocabularioAutorIndexado)
             
             if (qtdeSemelhancas >= maiorSemelhancas):
                 maiorSemelhancas = qtdeSemelhancas
-                autor = Util.getNomeAutorTxt(arquivo)
+                autorScap = autor
         
-        return autor
+        return autorScap
 
 
     # Retorna a quantidade de semelhancas de n-grams que tem 2 arquivos
     def getQtdeSemelhancas(self, dictConsulta, dictTemp):
         # Retorna os n-grams que tem na consulta, mas nao tem no dicionario comparado
         diferencaNGrams = set(dictConsulta.keys()) - set(dictTemp.keys())
+        #print "diferenca (consulta - autor): ", diferencaNGrams
         qtdeSemelhancas = len(dictConsulta.keys()) - len(diferencaNGrams)
         
         return qtdeSemelhancas

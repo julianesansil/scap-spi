@@ -12,29 +12,34 @@ from Util import Util
 
 class Preparador():
 
-    def __init__(self, dirNGrams, extensaoNGram, n, comComentariosELiterais):
-        self.dirNGrams = dirNGrams
-        self.extensaoNGram = extensaoNGram
+    def __init__(self, dirBasePreparada, extensaoParaSalvar, n, comQuebraLinha, comComentariosELiterais):
+        self.dirBasePreparada = dirBasePreparada
+        self.extensaoParaSalvar = extensaoParaSalvar
         self.n = n
+        self.comQuebraLinha = comQuebraLinha
         self.comComentariosELiterais = comComentariosELiterais
 
 
-    # Seleciona as caracteristicas relevantes dos arquivos
-    def prepararDiretorio(self, pathParaPreparar):
-        arquivos = glob.glob(pathParaPreparar)
+    # Seleciona as caracteristicas relevantes dos arquivos do diretorio passado
+    def prepararDiretorio(self, dirParaPreparar):
+        arquivos = glob.glob(dirParaPreparar)
         
-        #print "N-grams extraidos dos arquivos..."
         for arquivo in arquivos:
-            #print arquivo
             nGramsArquivo = []
             
-            stringArquivo = Util.lerArquivo(arquivo)
+            if (self.comQuebraLinha):
+                stringArquivo = Util.lerArquivo(arquivo)
+            else: 
+                # Se (comQuebraLinha = False), le o arquivo sem considerar as quebras de linha (LF, CR)
+                stringArquivo = Util.lerArquivoSemQuebraLinha(arquivo)
+            
+            # Se (comComentariosELiterais = False), retira os comentarios e literais da string
             if not (self.comComentariosELiterais):
                 stringArquivo = self.removerComentarios(stringArquivo)
                 stringArquivo = self.removerLiterais(stringArquivo)
                 #print stringArquivo
             
-            # Recupera os n-grams do arquivo
+            # Separa o arquivo em n-grams
             nGramsArquivo = self.separarEmNGrams(stringArquivo)
             self.salvarNGrams(Util.getNomeArquivo(arquivo), nGramsArquivo)
 
@@ -61,6 +66,7 @@ class Preparador():
         
         return stringArquivo
 
+
     # Divide a string de entrada em pedacos de tamanho n
     # Utilizando a tecnica de janela deslizante para percorrer a string
     def separarEmNGrams(self, stringArquivo):
@@ -79,7 +85,7 @@ class Preparador():
 
     # Salva os n-grams de determinado arquivo num arquivo
     def salvarNGrams(self, nomeArquivo, nGramsArquivo):
-        Util.salvarArquivo(os.path.join(self.dirNGrams, nomeArquivo + self.extensaoNGram), nGramsArquivo)
+        Util.salvarArquivo(os.path.join(self.dirBasePreparada, nomeArquivo + self.extensaoParaSalvar), nGramsArquivo)
 
 
     # Recupera os n-grams do arquivo
@@ -90,11 +96,13 @@ class Preparador():
     # De um conjunto de arquivos com varios n-grams, separa os n-grams por autor
     def recuperarNGramsPorAutor(self, arquivosNGrams):
         autor = ""
+        # Com defaultdict(list), dictNGramsPorAutor[autor] = []
+        # O defaultdict() inicia o valor do dict com uma lista vazia
         dictNGramsPorAutor = defaultdict(list)      # {"autor", "listNGramsAutor"}
         
-        # print "N-grams recuperados dos arquivos..."
+        #print "N-grams recuperados dos arquivos..."
         for arquivo in arquivosNGrams:
-            # print arquivo
+            #print arquivo
             
             autor = Util.getNomeAutor(arquivo)
             # Recupera os n-grams do arquivo e atualiza o dicionario de autores
@@ -108,7 +116,7 @@ class Preparador():
 
 
     def imprimirDiretorioPreparado(self):
-        arquivos = glob.glob(self.dirNGrams + "*" + self.extensaoNGram)
+        arquivos = glob.glob(self.dirBasePreparada + "*" + self.extensaoParaSalvar)
         dictNGramsPorAutor = self.recuperarNGramsPorAutor(arquivos)
         
         print ""

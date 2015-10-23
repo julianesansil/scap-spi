@@ -1,42 +1,57 @@
 
 import os
 import config
+from datetime import datetime
 from main.ExecucaoExperimento import ExecucaoExperimento
 
 
-listN = [6, 10, 14]
-listL = [0, 2000]
+listBase = config.dirBase
+listN = config.n
+listL = config.L
+comConsultaRetirada = config.comConsultaRetirada
+comQuebraLinha = config.comQuebraLinha
 
-if (os.path.isdir(config.dirParaPreparar) and os.path.isdir(config.dirIndices) and os.path.isdir(config.dirParaConsultar)):
-    
-    resultadosExperimentos = []
+for base in listBase:
 
-    print "******************************************************************************"
-    print "DIRETORIO-BASE: ", config.dirParaPreparar
-    print "******************************************************************************\n"
+    if (os.path.isdir(base) and os.path.isdir(config.dirResultados) and os.path.isdir(config.dirIndicesValidacao)):
+        dataInicial = datetime.now()
+        resultadosExperimentos = []
     
-    comComentariosELiterais = True
-    comTermos1Ocorrencia = True
-    resultadosExperimentos.append(ExecucaoExperimento.executar(listN, listL, comComentariosELiterais, comTermos1Ocorrencia))
-    resultadosExperimentos.append("\n")
-    
-    comComentariosELiterais = False
-    comTermos1Ocorrencia = True
-    resultadosExperimentos.append(ExecucaoExperimento.executar(listN, listL, comComentariosELiterais, comTermos1Ocorrencia))
-    resultadosExperimentos.append("\n")
-    
-    comComentariosELiterais = True
-    comTermos1Ocorrencia = False
-    resultadosExperimentos.append(ExecucaoExperimento.executar(listN, listL, comComentariosELiterais, comTermos1Ocorrencia))
-    resultadosExperimentos.append("\n")
-    
-    comComentariosELiterais = False
-    comTermos1Ocorrencia = False
-    resultadosExperimentos.append(ExecucaoExperimento.executar(listN, listL, comComentariosELiterais, comTermos1Ocorrencia))
-    resultadosExperimentos.append("\n")
+        print "******************************************************************************"
+        print "DIRETORIO-BASE: ", base
+        print "******************************************************************************\n"
+        
+        comComentariosELiterais = True
+        comTermos1Ocorrencia = True
+        resultadosExperimentos.append(ExecucaoExperimento.executar(base, listN, listL, comConsultaRetirada, comQuebraLinha, comComentariosELiterais, comTermos1Ocorrencia))
+        resultadosExperimentos.append("\n")
 
-    nomeBase = config.dirParaPreparar.split("/")
-    nomeBase = nomeBase[len(nomeBase)-2]
-    ExecucaoExperimento.salvarResultado(config.dirResultados, "".join(resultadosExperimentos), nomeBase, config.extensaoPadrao)
+        comComentariosELiterais = False
+        comTermos1Ocorrencia = True
+        resultadosExperimentos.append(ExecucaoExperimento.executar(base, listN, listL, comConsultaRetirada, comQuebraLinha, comComentariosELiterais, comTermos1Ocorrencia))
+        resultadosExperimentos.append("\n")
+        
+        comComentariosELiterais = True
+        comTermos1Ocorrencia = False
+        resultadosExperimentos.append(ExecucaoExperimento.executar(base, listN, listL, comConsultaRetirada, comQuebraLinha, comComentariosELiterais, comTermos1Ocorrencia))
+        resultadosExperimentos.append("\n")
+        
+        comComentariosELiterais = False
+        comTermos1Ocorrencia = False
+        resultadosExperimentos.append(ExecucaoExperimento.executar(base, listN, listL, comConsultaRetirada, comQuebraLinha, comComentariosELiterais, comTermos1Ocorrencia))
+        resultadosExperimentos.append("\n")
     
-else: print "Verifique se o diretorio dos indices, da base e o de consulta existem"
+        nomeBase = base.split("/")
+        nomeBase = nomeBase[len(nomeBase)-2]
+        ExecucaoExperimento.salvarResultado(config.dirResultados, "".join(resultadosExperimentos), nomeBase, config.extensaoParaSalvar)
+        
+        dataFinal = datetime.now()
+        tempo = dataFinal - dataInicial
+        print "Data inicial:" , dataInicial
+        print "Data final:" , dataFinal
+        print "Tempo: ", tempo
+        
+        print "[FIM DA BASE]"
+        print "******************************************************************************\n"
+    
+    else: print "Verifique se o diretorio dos indices, da base e o de consulta existem"

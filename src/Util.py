@@ -4,7 +4,7 @@ Created on 20/09/2015
 @author: Juliane
 '''
 
-import os, pickle
+import os
 
 
 class Util():
@@ -22,40 +22,24 @@ class Util():
 
 
     @staticmethod
-    def getNomeAutorTxt(arquivo):
-        nomeArquivo = Util.getNomeArquivo(arquivo)
-        nomeAutor = nomeArquivo[0:nomeArquivo.find(".")]
-        return nomeAutor
-
-
-    @staticmethod
     def salvarArquivo(arquivo, conteudo):
         with open(arquivo, "wb") as f:
             f.write(str(conteudo))
 
 
     @staticmethod
-    def salvarArquivoPickle(arquivo, conteudo):
-        with open(arquivo, "wb") as f:
-            pickle.dump(conteudo, f)
-
-
-    @staticmethod
     def lerArquivo(arquivo):
         with open(arquivo, "rb") as f:
-            # Le com LF, CR
             return f.read()
 
-            # Le sem LF, CR
-            #string = "".join(f.readlines())
-            #string = string.replace("\n", " ").replace("\r", "")
-            #return string
 
-
+    # Le o arquivo sem considerar as quebras de linha (LF, CR)
     @staticmethod
-    def lerArquivoPickle(arquivo):
+    def lerArquivoSemQuebraLinha(arquivo):
         with open(arquivo, "rb") as f:
-            return dict(pickle.load(f))
+            stringArquivo = "".join(f.readlines())
+            stringArquivo = stringArquivo.replace("\n", " ").replace("\r", "")
+            return stringArquivo
 
 
     @staticmethod

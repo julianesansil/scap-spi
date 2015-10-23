@@ -4,51 +4,48 @@ Created on 04/10/2015
 @author: Juliane
 '''
 
-import glob, os, shutil
+import glob, os
 from Util import Util
 
 
 class Experimento():
-    
-    def __init__(self, indexador, buscador):
+
+    def __init__(self, indexador, buscador, comConsultaRetirada):
         self.indexador = indexador
         self.buscador = buscador
+        self.comConsultaRetirada = comConsultaRetirada
 
 
     # Compara 1 arquivo-consulta com todos da base, depois outro com todos e assim por diante...
     # Reindexando o perfil do autor desse arquivo antes da comparacao
     # A fim de encontrar o autor do arquivo
-    def testar(self, dirBase, dirParaConsultar, finalAceito):
+    def testar(self, dictPerfilAutor, dirBase, finalAceito):
         # Informacoes do experimento
         numExperimentos = 0
         numAcertos = 0
         autorAnterior = ""
-
+        
         arquivosBase = glob.glob(os.path.join(dirBase, finalAceito))
-
-        for arquivoRetirado in arquivosBase:
-            autorVerdadeiro = Util.getNomeAutor(arquivoRetirado)
-            autorScap = ""
-
-            if (autorAnterior != "" and autorAnterior != autorVerdadeiro):
-                # Reindexa todos os codigos do autor anterior
-                self.indexador.indexarDiretorio(os.path.join(dirBase, autorAnterior + finalAceito))
-                #print "Autor anterior re-indexado: %s\n" % (autorAnterior)
-
-            # Move o arquivo-consulta do diretorio atual para um de consulta
-            shutil.move(arquivoRetirado, dirParaConsultar)
-            # Exclui o perfil indexado do autor (se houver) do diretorio de indices
-            Util.excluirArquivo(os.path.join(self.indexador.dirIndices, Util.getNomeAutor(arquivoRetirado) + self.indexador.extensaoIndices))
-            # Reindexa os codigo deste autor (sem o arquivo retirado)
-            self.indexador.indexarDiretorio(os.path.join(dirBase, autorVerdadeiro + finalAceito))
+        
+        for arquivoParaRetirar in arquivosBase:
+            autorVerdadeiro = Util.getNomeAutor(arquivoParaRetirar)
             
-            arquivoConsulta = os.path.join(dirParaConsultar, Util.getNomeArquivo(arquivoRetirado))
+            # Se (comConsultaRetirada = True), retira o arquivo-consulta da base para nao constar na comparacao
+            if (self.comConsultaRetirada):
+                if (autorAnterior != "" and autorAnterior != autorVerdadeiro):
+                    # Reindexa todos os codigos do autor anterior
+                    vocabularioAutorAnteriorIndexado = self.indexador.indexarDiretorio(os.path.join(dirBase, autorAnterior + finalAceito))
+                    vocabularioAutorAnteriorIndexado = dict(vocabularioAutorAnteriorIndexado[autorAnterior])
+                    dictPerfilAutor[autorAnterior] = vocabularioAutorAnteriorIndexado
+                
+                # Reindexa os codigo deste autor (sem o arquivoParaRetirar)
+                vocabularioAutorIndexado = self.indexador.indexarDiretorioSemArquivoEspecifico(os.path.join(dirBase, autorVerdadeiro + finalAceito), arquivoParaRetirar)
+                vocabularioAutorIndexado = dict(vocabularioAutorIndexado[autorVerdadeiro])
+                dictPerfilAutor[autorVerdadeiro] = vocabularioAutorIndexado
+            
             # Faz a consulta/comparacao e sugere quem e o autor do arquivo
-            autorScap = self.buscador.compararComTodosDaBase(arquivoConsulta)
+            autorScap = self.buscador.compararComTodosDaBase(arquivoParaRetirar, dictPerfilAutor)
             
-            # Retorna o arquivo retirado para o diretorio das bases
-            shutil.move(arquivoConsulta, dirBase)
-         
             numExperimentos += 1
             if (autorVerdadeiro == autorScap):
                 numAcertos += 1
@@ -56,7 +53,7 @@ class Experimento():
             
             autorAnterior = autorVerdadeiro
             
-            # self.imprimirResultado(arquivoRetirado, autorVerdadeiro, autorScap, numExperimentos, numAcertos, acuracia)
+            #self.imprimirResultado(arquivoParaRetirar, autorVerdadeiro, autorScap, numExperimentos, numAcertos, acuracia)
             # if para imprimir somente o ultimo resultado, ou seja, a acuracia total do algoritmo
             if (numExperimentos == len(arquivosBase)):
                 self.imprimirResultado(numExperimentos, numAcertos, acuracia)
@@ -64,7 +61,7 @@ class Experimento():
         return self.guardarResultado(numExperimentos, numAcertos, acuracia)
 
 
-    #def imprimirResposta(self, arquivoConsulta, autorVerdadeiro, autorScap, numExperimentos, numAcertos, acuracia):
+    #def imprimirResultado(self, arquivoConsulta, autorVerdadeiro, autorScap, numExperimentos, numAcertos, acuracia):
     def imprimirResultado(self, numExperimentos, numAcertos, acuracia):
         #print "Arquivo-consulta: ", arquivoConsulta
         

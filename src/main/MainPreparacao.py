@@ -6,12 +6,15 @@ from scap import Preparador
 from Util import Util
 
 
-preparador = Preparador(config.dirNGrams, config.extensaoPadrao, config.n, True)
+n = config.n[0]
+comQuebraEspaco = True
+comComentariosELiterais = True
 
-# Antes de iniciar, esvazia o diretorio onde os n-grams ficarao
-Util.esvaziarDiretorio(config.dirNGrams)
+preparador = Preparador(config.dirBasePreparada, config.extensaoParaSalvar, n, comQuebraEspaco, comComentariosELiterais)
 
+# Antes de iniciar a preparacao dos arquivos, esvazia o diretorio onde os n-grams ficarao
+Util.esvaziarDiretorio(config.dirBasePreparada)
 # Recupera e salva as caracteristicas relevantes dos arquivos para posterior indexacao
-preparador.prepararDiretorio(os.path.join(config.dirParaPreparar, "*" + config.extensaoAceita))
+preparador.prepararDiretorio(os.path.join(config.dirBase, "*" + config.extensaoAceita))
 # Imprime os arquivos preparados
 preparador.imprimirDiretorioPreparado()
