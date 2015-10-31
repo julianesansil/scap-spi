@@ -19,32 +19,35 @@ class Experimento():
     # Compara 1 arquivo-consulta com todos da base, depois outro com todos e assim por diante...
     # Reindexando o perfil do autor desse arquivo antes da comparacao
     # A fim de encontrar o autor do arquivo
-    def testar(self, dictPerfilAutor, dirBase, finalAceito):
+    def testar(self, arquivosConsulta, dictPerfilAutor, dirBasePreparada, extensaoPadrao):
         # Informacoes do experimento
         numExperimentos = 0
         numAcertos = 0
         autorAnterior = ""
         
-        arquivosBase = glob.glob(os.path.join(dirBase, finalAceito))
-        
-        for arquivoParaRetirar in arquivosBase:
-            autorVerdadeiro = Util.getNomeAutor(arquivoParaRetirar)
+        for arquivoConsulta in arquivosConsulta:
+            autorVerdadeiro = Util.getNomeAutor(arquivoConsulta)
             
             # Se (comConsultaRetirada = True), retira o arquivo-consulta da base para nao constar na comparacao
             if (self.comConsultaRetirada):
                 if (autorAnterior != "" and autorAnterior != autorVerdadeiro):
                     # Reindexa todos os codigos do autor anterior
-                    vocabularioAutorAnteriorIndexado = self.indexador.indexarDiretorio(os.path.join(dirBase, autorAnterior + finalAceito))
+                    arquivosParaIndexar = glob.glob(os.path.join(dirBasePreparada, autorAnterior + "*" + extensaoPadrao))
+                    vocabularioAutorAnteriorIndexado = self.indexador.indexarArquivos(arquivosParaIndexar)
                     vocabularioAutorAnteriorIndexado = dict(vocabularioAutorAnteriorIndexado[autorAnterior])
                     dictPerfilAutor[autorAnterior] = vocabularioAutorAnteriorIndexado
                 
                 # Reindexa os codigo deste autor (sem o arquivoParaRetirar)
-                vocabularioAutorIndexado = self.indexador.indexarDiretorioSemArquivoEspecifico(os.path.join(dirBase, autorVerdadeiro + finalAceito), arquivoParaRetirar)
+                arquivosParaIndexar = glob.glob(os.path.join(dirBasePreparada, autorVerdadeiro + "*" + extensaoPadrao))
+                arquivoParaRetirar = Util.getNomeArquivo(arquivoConsulta)
+                arquivoParaRetirar = dirBasePreparada[0:len(dirBasePreparada)-1] + "\\" + arquivoParaRetirar + extensaoPadrao
+
+                vocabularioAutorIndexado = self.indexador.indexarArquivosSemArquivoEspecifico(arquivosParaIndexar, arquivoParaRetirar)
                 vocabularioAutorIndexado = dict(vocabularioAutorIndexado[autorVerdadeiro])
                 dictPerfilAutor[autorVerdadeiro] = vocabularioAutorIndexado
             
             # Faz a consulta/comparacao e sugere quem e o autor do arquivo
-            autorScap = self.buscador.compararComTodosDaBase(arquivoParaRetirar, dictPerfilAutor)
+            autorScap = self.buscador.compararComTodosDaBase(arquivoConsulta, dictPerfilAutor)
             
             numExperimentos += 1
             if (autorVerdadeiro == autorScap):
@@ -53,9 +56,9 @@ class Experimento():
             
             autorAnterior = autorVerdadeiro
             
-            #self.imprimirResultado(arquivoParaRetirar, autorVerdadeiro, autorScap, numExperimentos, numAcertos, acuracia)
+            #self.imprimirResultado(arquivoConsulta, autorVerdadeiro, autorScap, numExperimentos, numAcertos, acuracia)
             # if para imprimir somente o ultimo resultado, ou seja, a acuracia total do algoritmo
-            if (numExperimentos == len(arquivosBase)):
+            if (numExperimentos == len(arquivosConsulta)):
                 self.imprimirResultado(numExperimentos, numAcertos, acuracia)
         
         return self.guardarResultado(numExperimentos, numAcertos, acuracia)

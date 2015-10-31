@@ -11,39 +11,39 @@ listL = config.L
 comConsultaRetirada = config.comConsultaRetirada
 comQuebraLinha = config.comQuebraLinha
 
-for base in listBase:
+for dirBase in listBase:
 
-    if (os.path.isdir(base) and os.path.isdir(config.dirResultados) and os.path.isdir(config.dirIndicesValidacao)):
+    if (os.path.isdir(dirBase) and os.path.isdir(config.dirResultados) and os.path.isdir(config.dirIndicesValidacao)):
         dataInicial = datetime.now()
         resultadosExperimentos = []
     
         print "******************************************************************************"
-        print "DIRETORIO-BASE: ", base
+        print "DIRETORIO-BASE: ", dirBase
         print "******************************************************************************\n"
         
         comComentariosELiterais = True
         comTermos1Ocorrencia = True
-        resultadosExperimentos.append(ExecucaoExperimento.executar(base, listN, listL, comConsultaRetirada, comQuebraLinha, comComentariosELiterais, comTermos1Ocorrencia))
+        resultadosExperimentos.append(ExecucaoExperimento.executar(dirBase, listN, listL, comConsultaRetirada, comQuebraLinha, comComentariosELiterais, comTermos1Ocorrencia))
         resultadosExperimentos.append("\n")
 
         comComentariosELiterais = False
         comTermos1Ocorrencia = True
-        resultadosExperimentos.append(ExecucaoExperimento.executar(base, listN, listL, comConsultaRetirada, comQuebraLinha, comComentariosELiterais, comTermos1Ocorrencia))
+        resultadosExperimentos.append(ExecucaoExperimento.executar(dirBase, listN, listL, comConsultaRetirada, comQuebraLinha, comComentariosELiterais, comTermos1Ocorrencia))
         resultadosExperimentos.append("\n")
         
         comComentariosELiterais = True
         comTermos1Ocorrencia = False
-        resultadosExperimentos.append(ExecucaoExperimento.executar(base, listN, listL, comConsultaRetirada, comQuebraLinha, comComentariosELiterais, comTermos1Ocorrencia))
+        resultadosExperimentos.append(ExecucaoExperimento.executar(dirBase, listN, listL, comConsultaRetirada, comQuebraLinha, comComentariosELiterais, comTermos1Ocorrencia))
         resultadosExperimentos.append("\n")
         
         comComentariosELiterais = False
         comTermos1Ocorrencia = False
-        resultadosExperimentos.append(ExecucaoExperimento.executar(base, listN, listL, comConsultaRetirada, comQuebraLinha, comComentariosELiterais, comTermos1Ocorrencia))
+        resultadosExperimentos.append(ExecucaoExperimento.executar(dirBase, listN, listL, comConsultaRetirada, comQuebraLinha, comComentariosELiterais, comTermos1Ocorrencia))
         resultadosExperimentos.append("\n")
     
-        nomeBase = base.split("/")
-        nomeBase = nomeBase[len(nomeBase)-2]
-        ExecucaoExperimento.salvarResultado(config.dirResultados, "".join(resultadosExperimentos), nomeBase, config.extensaoParaSalvar)
+        nomedirBase = dirBase.split("/")
+        nomedirBase = nomedirBase[len(nomedirBase)-2]
+        ExecucaoExperimento.salvarResultado(config.dirResultados, "".join(resultadosExperimentos), nomedirBase, config.extensaoPadrao)
         
         dataFinal = datetime.now()
         tempo = dataFinal - dataInicial

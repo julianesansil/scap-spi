@@ -4,7 +4,7 @@ Created on 20/09/2015
 @author: Juliane
 '''
 
-import itertools, glob, os
+import itertools, os
 from collections import Counter, OrderedDict
 from Util import Util
 
@@ -15,19 +15,6 @@ class Indexador():
         self.preparador = preparador
         self.L = L
         self.comTermos1Ocorrencia = comTermos1Ocorrencia
-
-
-    # Indexa o diretorio passado
-    def indexarDiretorio(self, dirParaIndexar):
-        arquivosNGrams = glob.glob(dirParaIndexar)
-        return self.indexarArquivos(arquivosNGrams)
-
-
-    # Retira o arquivoRetirar do diretorio passado para, em seguida, indexa-lo
-    def indexarDiretorioSemArquivoEspecifico(self, dirParaIndexar, arquivoParaRetirar):
-        arquivosNGrams = glob.glob(dirParaIndexar)
-        arquivosNGrams.remove(arquivoParaRetirar)
-        return self.indexarArquivos(arquivosNGrams)
 
 
     # Indexa os arquivos de acordo com as regras do algoritmo scap
@@ -46,15 +33,10 @@ class Indexador():
         return dictPerfilAutores
 
 
-    # Indexa o arquivo passado de acordo com as regras do algoritmo scap
-    def indexarArquivo(self, arquivo):
-        nGrams = self.preparador.recuperarNGrams(arquivo)
-        vocabularioIndexado = self.indexarNGrams(nGrams)
-
-        # Considera ou desconsidera o L para indexacao        
-        if (self.L > 0):
-            return self.recuperarLNGrams(vocabularioIndexado, self.L)
-        else: return vocabularioIndexado
+    # Retira o arquivoRetirar para, em seguida, indexar os demais arquivos
+    def indexarArquivosSemArquivoEspecifico(self, arquivos, arquivoParaRetirar):
+        arquivos.remove(arquivoParaRetirar)
+        return self.indexarArquivos(arquivos)
 
 
     # Indexa o vocabulario extraido dos n-grams
@@ -99,7 +81,7 @@ class Indexador():
 
 
 
-    def salvarValidacaoIndices(self, dirIndicesValidacao, dictPerfilAutores, extensaoParaSalvar):
+    def salvarValidacaoIndices(self, dirIndicesValidacao, dictPerfilAutores, extensaoPadrao):
         for autor, vocabularioAutorIndexado in dictPerfilAutores.iteritems():
             stringArquivo = []
 
@@ -118,4 +100,4 @@ class Indexador():
             stringArquivo.append("\r\nPorcentagem dos termos com 1 ocorrencia: " + str(percentTermos1Ocorrencia) + "%")
                                      
             stringPerfilAutor = "".join(stringArquivo)
-            Util.salvarArquivo(os.path.join(dirIndicesValidacao, autor + extensaoParaSalvar), stringPerfilAutor)
+            Util.salvarArquivo(os.path.join(dirIndicesValidacao, autor + extensaoPadrao), stringPerfilAutor)

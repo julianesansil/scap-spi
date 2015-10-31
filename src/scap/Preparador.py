@@ -21,27 +21,30 @@ class Preparador():
 
 
     # Seleciona as caracteristicas relevantes dos arquivos do diretorio passado
-    def prepararDiretorio(self, dirParaPreparar):
-        arquivos = glob.glob(dirParaPreparar)
-        
+    def prepararArquivos(self, arquivos):
         for arquivo in arquivos:
-            nGramsArquivo = []
-            
-            if (self.comQuebraLinha):
-                stringArquivo = Util.lerArquivo(arquivo)
-            else: 
-                # Se (comQuebraLinha = False), le o arquivo sem considerar as quebras de linha (LF, CR)
-                stringArquivo = Util.lerArquivoSemQuebraLinha(arquivo)
-            
-            # Se (comComentariosELiterais = False), retira os comentarios e literais da string
-            if not (self.comComentariosELiterais):
-                stringArquivo = self.removerComentarios(stringArquivo)
-                stringArquivo = self.removerLiterais(stringArquivo)
-                #print stringArquivo
-            
-            # Separa o arquivo em n-grams
-            nGramsArquivo = self.separarEmNGrams(stringArquivo)
-            self.salvarNGrams(Util.getNomeArquivo(arquivo), nGramsArquivo)
+            nGrams = []
+            nGrams = self.prepararArquivo(arquivo)
+            self.salvarNGrams(Util.getNomeArquivo(arquivo), nGrams)
+
+
+    # Seleciona as caracteristicas relevantes do arquivo passado
+    def prepararArquivo(self, arquivo):
+        if (self.comQuebraLinha):
+            stringArquivo = Util.lerArquivo(arquivo)
+        else: 
+            # Se (comQuebraLinha = False), le o arquivo sem considerar as quebras de linha (LF, CR)
+            stringArquivo = Util.lerArquivoSemQuebraLinha(arquivo)
+        
+        # Se (comComentariosELiterais = False), retira os comentarios e literais da string
+        if not (self.comComentariosELiterais):
+            stringArquivo = self.removerComentarios(stringArquivo)
+            stringArquivo = self.removerLiterais(stringArquivo)
+            #print stringArquivo
+        
+        # Separa o arquivo em n-grams
+        nGrams = self.separarEmNGrams(stringArquivo)
+        return nGrams
 
 
     # Remove os comentarios (//..., /*...*/) da string passada
@@ -84,13 +87,13 @@ class Preparador():
 
 
     # Salva os n-grams de determinado arquivo num arquivo
-    def salvarNGrams(self, nomeArquivo, nGramsArquivo):
-        Util.salvarArquivo(os.path.join(self.dirBasePreparada, nomeArquivo + self.extensaoParaSalvar), nGramsArquivo)
+    def salvarNGrams(self, nomeArquivo, nGrams):
+        Util.salvarArquivo(os.path.join(self.dirBasePreparada, nomeArquivo + self.extensaoParaSalvar), nGrams)
 
 
     # Recupera os n-grams do arquivo
-    def recuperarNGrams(self, arquivo):
-        return Util.lerArquivo(arquivo)
+    def recuperarNGrams(self, arquivoNGrams):
+        return Util.lerArquivo(arquivoNGrams)
 
 
     # De um conjunto de arquivos com varios n-grams, separa os n-grams por autor

@@ -4,7 +4,7 @@ Created on 20/10/2015
 @author: Juliane
 '''
 
-import os
+import glob, os
 import config
 from scap import Preparador, Indexador, Buscador, Experimento
 from Util import Util
@@ -14,20 +14,25 @@ class ExecucaoExperimento():
     
     # Dado um conjunto de parametros para experimento, testa as possibilidades e retorna um resultado
     @staticmethod
-    def executar(base, listN, listL, comConsultaRetirada, comQuebraLinha, comComentariosELiterais, comTermos1Ocorrencia):
+    def executar(dirBase, listN, listL, comConsultaRetirada, comQuebraLinha, comComentariosELiterais, comTermos1Ocorrencia):
         resultadosExperimentos = []
         
         for n in listN:
-            preparador = Preparador(config.dirBasePreparada, config.extensaoParaSalvar, n, comQuebraLinha, comComentariosELiterais)
+            preparador = Preparador(config.dirBasePreparada, config.extensaoPadrao, n, comQuebraLinha, comComentariosELiterais)
+            # Configura o preparador da consulta (o baseline e comComentariosELiterais = False)
+            preparadorConsulta = Preparador(config.dirBasePreparada, config.extensaoPadrao, n, comQuebraLinha, False)
             
             # Antes de iniciar a preparacao dos arquivos, esvazia o diretorio onde os n-grams ficarao
             Util.esvaziarDiretorio(config.dirBasePreparada)
             # Recupera e salva as caracteristicas relevantes dos arquivos para posterior indexacao
-            preparador.prepararDiretorio(os.path.join(base, "*" + config.extensaoAceita))
+            arquivosParaPreparar = glob.glob(os.path.join(dirBase, "*" + config.extensaoAceita))
+            preparador.prepararArquivos(arquivosParaPreparar)
             
             for L in listL:
                 indexador = Indexador(preparador, L, comTermos1Ocorrencia)
-                buscador = Buscador(indexador, L)
+                # Configura o indexador da consulta (o baseline e comTermos1Ocorrencia = True)
+                indexadorConsulta = Indexador(preparadorConsulta, L, True)
+                buscador = Buscador(preparadorConsulta, indexadorConsulta)
                 experimento = Experimento(indexador, buscador, comConsultaRetirada)
                 
                 if (comComentariosELiterais):
@@ -43,16 +48,20 @@ class ExecucaoExperimento():
                 print "=> RESULTADO <="
                 
                 # Indexa os arquivos do diretorio de acordo com as regras do algoritmo scap
-                dictPerfilAutores = indexador.indexarDiretorio(os.path.join(config.dirBasePreparada, "*" + config.extensaoParaSalvar))
+                arquivosParaIndexar = glob.glob(os.path.join(config.dirBasePreparada, "*" + config.extensaoPadrao))
+                # dictPerfilAutores = {"autor", "vocabularioAutorIndexado"}
+                dictPerfilAutores = indexador.indexarArquivos(arquivosParaIndexar)
+                
                 # Antes de salvar os indides para validacao, esvazia o diretorio onde eles ficarao
                 Util.esvaziarDiretorio(config.dirIndicesValidacao)
-                indexador.salvarValidacaoIndices(config.dirIndicesValidacao, dictPerfilAutores, config.extensaoParaSalvar)
+                indexador.salvarValidacaoIndices(config.dirIndicesValidacao, dictPerfilAutores, config.extensaoPadrao)
                 
                 # Compara 1 arquivo-consulta com todos da base, depois outro com todos e assim por diante...
                 # Reindexando o perfil do autor desse arquivo antes da comparacao
                 # A fim de encontrar o autor do arquivo
+                arquivosConsulta = glob.glob(os.path.join(dirBase, "*" + config.extensaoAceita))
                 # resultadoExperimento = numExperimentos + numAcertos + acuracia
-                resultadoExperimento = experimento.testar(dictPerfilAutores, config.dirBasePreparada, "*" + config.extensaoParaSalvar)
+                resultadoExperimento = experimento.testar(arquivosConsulta, dictPerfilAutores, config.dirBasePreparada, config.extensaoPadrao)
                 resultadosExperimentos.append(ExecucaoExperimento.guardarResultado(n, L, comComentariosELiterais, comTermos1Ocorrencia, resultadoExperimento))
             
             print "[FIM DO n]"
@@ -89,6 +98,6 @@ class ExecucaoExperimento():
 
 
     @staticmethod
-    def salvarResultado(dirResultados, resultado, nomeBase, extensao):
-        print os.path.join(dirResultados, nomeBase + extensao)
-        Util.salvarArquivo(os.path.join(dirResultados, nomeBase + extensao), resultado)
+    def salvarResultado(dirResultados, resultado, nomedirBase, extensao):
+        print os.path.join(dirResultados, nomedirBase + extensao)
+        Util.salvarArquivo(os.path.join(dirResultados, nomedirBase + extensao), resultado)

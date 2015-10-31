@@ -7,23 +7,27 @@ Created on 29/09/2015
 
 class Buscador():
 
-    def __init__(self, indexador, L):
+    def __init__(self, preparador, indexador):
+        self.preparador = preparador
         self.indexador = indexador
-        self.L = L
 
 
     # Compara o vocabulario indexado do arquivo-consulta com os demais da base
     # E retorna o autor com maior numero de semelhancas de n-grams
     def compararComTodosDaBase(self, arquivoConsulta, dictPerfilAutor):
-        vocabularioConsultaIndexado = self.indexador.indexarArquivo(arquivoConsulta)
-        #print "vocabulario consulta: ", vocabularioConsultaIndexado
+        nGramsConsulta = self.preparador.prepararArquivo(arquivoConsulta)
+        vocabularioConsultaIndexado = self.indexador.indexarNGrams(nGramsConsulta)
+        if (self.indexador.L > 0):
+                # Atualiza o dicionario com os L n-grams mais frequentes
+                vocabularioConsultaIndexado = self.indexador.recuperarLNGrams(vocabularioConsultaIndexado, self.indexador.L)
+        #print "Vocabulario-consulta indexado: ", vocabularioConsultaIndexado
         
         autorScap = ""
         qtdeSemelhancas = 0
         maiorSemelhancas = 0
         
         for autor, vocabularioAutorIndexado in dictPerfilAutor.iteritems():
-            #print "vocabulario autor: ", vocabularioAutorIndexado
+            #print "Vocabulario-autor indexado: ", vocabularioAutorIndexado
             qtdeSemelhancas = self.getQtdeSemelhancas(vocabularioConsultaIndexado, vocabularioAutorIndexado)
             
             if (qtdeSemelhancas >= maiorSemelhancas):
