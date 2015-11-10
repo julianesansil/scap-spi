@@ -45,6 +45,14 @@ class Experimento():
                 vocabularioAutorIndexado = self.indexador.indexarArquivosSemArquivoEspecifico(arquivosParaIndexar, arquivoParaRetirar)
                 vocabularioAutorIndexado = dict(vocabularioAutorIndexado[autorVerdadeiro])
                 dictPerfilAutor[autorVerdadeiro] = vocabularioAutorIndexado
+                
+                # Verifica a presenca de termos com 1 ocorrencia na base indexada
+                #for autor, ngramsIndexado in dictPerfilAutor.iteritems():
+                #    for ngrams, frequencia in ngramsIndexado.iteritems():
+                #        if (frequencia == 1):
+                #            print "igual a 1"
+                #            print autor
+                #            print ngrams, " : " , frequencia
             
             # Faz a consulta/comparacao e sugere quem e o autor do arquivo
             autorScap = self.buscador.compararComTodosDaBase(arquivoConsulta, dictPerfilAutor)

@@ -7,11 +7,11 @@ comQuebraLinha = True       # Considera ou nao as quebras de linha (LF, CR) na l
 
 # Extensao e diretorios utilizados na preparacao, indexacao e consulta dos arquivos
 extensaoAceita = ""
-dirBase = ["C:/Users/Juliane/Dropbox/TCC/Codigo/util/base/b1/", "C:/Users/Juliane/Dropbox/TCC/Codigo/util/base/b2/", "C:/Users/Juliane/Dropbox/TCC/Codigo/util/base/b3/"]
-#dirBase = ["C:/Users/Juliane/Dropbox/TCC/Codigo/util/base/b1/"]
-dirBasePreparada = "C:/Users/Juliane/Dropbox/TCC/Codigo/util/n-grams/"
+dirBase = ["S:/Dropbox/TCC/Codigo/util/base/b1/", "S:/Dropbox/TCC/Codigo/util/base/b2/", "S:/Dropbox/TCC/Codigo/util/base/b3/"]
+#dirBase = ["S:/Dropbox/TCC/Codigo/util/base/b1/"]
+dirBasePreparada = "S:/Dropbox/TCC/Codigo/util/n-grams/"
 
-# Extensao e diretorios utilizados para salvar os resultados e os testes
+# Extensao e diretorios utilizados para salvar os resultados
 extensaoPadrao = ".txt"
-dirResultados = "C:/Users/Juliane/Dropbox/TCC/Codigo/util/resultados/com_consulta_retirada/outros/"
-dirIndicesValidacao = "C:/Users/Juliane/Dropbox/TCC/Codigo/util/indices-validacao/"
+dirResultados = "S:/Dropbox/TCC/Codigo/util/resultados/spi/com_consulta_retirada/outros/"
+dirIndicesValidacao = "S:/Dropbox/TCC/Codigo/util/indices/"
