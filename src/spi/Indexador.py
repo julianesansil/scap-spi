@@ -17,7 +17,7 @@ class Indexador():
         self.comTermos1Ocorrencia = comTermos1Ocorrencia
 
 
-    # Indexa os arquivos de acordo com as regras do algoritmo scap
+    # Indexa os arquivos de acordo com as regras do algoritmo spi
     def indexarArquivos(self, arquivos):
         dictPerfilAutores = self.preparador.recuperarNGramsPorAutor(arquivos)   # {"autor", "nGramsAutor"} => {"autor", "vocabularioAutorIndexado"}
         

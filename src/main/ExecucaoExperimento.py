@@ -6,7 +6,7 @@ Created on 20/10/2015
 
 import glob, os
 import config
-from scap import Preparador, Indexador, Buscador, Experimento
+from spi import Preparador, Indexador, Buscador, Experimento
 from Util import Util
 
 
@@ -47,7 +47,7 @@ class ExecucaoExperimento():
                 print "Para L = ", L
                 print "=> RESULTADO <="
                 
-                # Indexa os arquivos do diretorio de acordo com as regras do algoritmo scap
+                # Indexa os arquivos do diretorio de acordo com as regras do algoritmo spi
                 arquivosParaIndexar = glob.glob(os.path.join(config.dirBasePreparada, "*" + config.extensaoPadrao))
                 # dictPerfilAutores = {"autor", "vocabularioAutorIndexado"}
                 dictPerfilAutores = indexador.indexarArquivos(arquivosParaIndexar)

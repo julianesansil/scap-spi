@@ -2,7 +2,7 @@
 
 import glob, os
 import config
-from scap import Preparador, Indexador
+from spi import Preparador, Indexador
 from Util import Util
 
 
@@ -22,7 +22,7 @@ Util.esvaziarDiretorio(config.dirBasePreparada)
 arquivosParaPreparar = glob.glob(os.path.join(dirBase, "*" + config.extensaoAceita))
 preparador.prepararArquivos(arquivosParaPreparar)
 
-# Indexa os arquivos do diretorio de acordo com as regras do algoritmo scap
+# Indexa os arquivos do diretorio de acordo com as regras do algoritmo spi
 arquivosParaIndexar = glob.glob(os.path.join(config.dirBasePreparada, "*" + config.extensaoPadrao))
 # dictPerfilAutores = {"autor", "vocabularioAutorIndexado"}
 dictPerfilAutores = indexador.indexarArquivos(arquivosParaIndexar)

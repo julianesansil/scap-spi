@@ -56,13 +56,12 @@ class Experimento():
             
             # Faz a consulta/comparacao e sugere quem e o autor do arquivo
             autorScap = self.buscador.compararComTodosDaBase(arquivoConsulta, dictPerfilAutor)
+            autorAnterior = autorVerdadeiro
             
             numExperimentos += 1
             if (autorVerdadeiro == autorScap):
                 numAcertos += 1
             acuracia = numAcertos/float(numExperimentos)
-            
-            autorAnterior = autorVerdadeiro
             
             #self.imprimirResultado(arquivoConsulta, autorVerdadeiro, autorScap, numExperimentos, numAcertos, acuracia)
             # if para imprimir somente o ultimo resultado, ou seja, a acuracia total do algoritmo
@@ -77,7 +76,7 @@ class Experimento():
         #print "Arquivo-consulta: ", arquivoConsulta
         
         #print "Autor verdadeiro re-indexado: ", autorVerdadeiro
-        #print "Autor scap: ", autorScap
+        #print "Autor spi: ", autorScap
     
         print "Numero de experimentos: ", numExperimentos
         print "Numero de acertos: ", numAcertos

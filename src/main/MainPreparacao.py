@@ -2,7 +2,7 @@
 
 import glob, os
 import config
-from scap import Preparador
+from spi import Preparador
 from Util import Util
 
 
