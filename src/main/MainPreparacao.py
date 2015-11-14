@@ -9,7 +9,7 @@ from Util import Util
 dirBase = config.dirBase[0]
 n = config.n[0]
 comQuebraEspaco = True
-comComentariosELiterais = True
+comComentariosELiterais = False
 
 preparador = Preparador(config.dirBasePreparada, config.extensaoPadrao, n, comQuebraEspaco, comComentariosELiterais)
 

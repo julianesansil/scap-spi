@@ -48,16 +48,20 @@ class Indexador():
         
         # Se (comTermos1Ocorrencia = True), retira os termos com 1 ocorrencia do vocabulario
         if not (self.comTermos1Ocorrencia):
+            return self.removerTermos1Ocorrencia(vocabularioIndexado)
+        
+        return vocabularioIndexado
+
+
+    def removerTermos1Ocorrencia(self, vocabularioIndexado):
             vocabularioSemTermo1Ocorrencia = {}
             vocabularioSemTermo1Ocorrencia.update(vocabularioIndexado)
             
             for nGram, frequenciaNGram in vocabularioIndexado.iteritems():
                 if (frequenciaNGram == 1):
                     del vocabularioSemTermo1Ocorrencia[nGram]
-
+            
             return vocabularioSemTermo1Ocorrencia
-        
-        return vocabularioIndexado
 
 
     # Recupera os L primeiros n-grams mais frequentes do dicionario

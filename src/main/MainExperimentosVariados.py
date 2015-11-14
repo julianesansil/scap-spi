@@ -22,7 +22,7 @@ for dirBase in listBase:
         print "******************************************************************************\n"
         
         comComentariosELiterais = True
-        comTermos1Ocorrencia = True
+        comTermos1Ocorrencia = False
         resultadosExperimentos.append(ExecucaoExperimento.executar(dirBase, listN, listL, comConsultaRetirada, comQuebraLinha, comComentariosELiterais, comTermos1Ocorrencia))
         resultadosExperimentos.append("\n")
 

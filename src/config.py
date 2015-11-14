@@ -8,7 +8,7 @@ comQuebraLinha = True       # Considera ou nao as quebras de linha (LF, CR) na l
 # Extensao e diretorios utilizados na preparacao, indexacao e consulta dos arquivos
 extensaoAceita = ""
 dirBase = ["S:/Dropbox/TCC/Codigo/util/base/b1/", "S:/Dropbox/TCC/Codigo/util/base/b2/", "S:/Dropbox/TCC/Codigo/util/base/b3/"]
-#dirBase = ["S:/Dropbox/TCC/Codigo/util/base/b1/"]
+#dirBase = ["S:/Dropbox/TCC/Codigo/util/base/"]
 dirBasePreparada = "S:/Dropbox/TCC/Codigo/util/n-grams/"
 
 # Extensao e diretorios utilizados para salvar os resultados
