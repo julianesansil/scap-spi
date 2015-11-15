@@ -54,14 +54,14 @@ class Indexador():
 
 
     def removerTermos1Ocorrencia(self, vocabularioIndexado):
-            vocabularioSemTermo1Ocorrencia = {}
-            vocabularioSemTermo1Ocorrencia.update(vocabularioIndexado)
+            vocabularioSemTermos1Ocorrencia = {}
+            vocabularioSemTermos1Ocorrencia.update(vocabularioIndexado)
             
             for nGram, frequenciaNGram in vocabularioIndexado.iteritems():
                 if (frequenciaNGram == 1):
-                    del vocabularioSemTermo1Ocorrencia[nGram]
+                    del vocabularioSemTermos1Ocorrencia[nGram]
             
-            return vocabularioSemTermo1Ocorrencia
+            return vocabularioSemTermos1Ocorrencia
 
 
     # Recupera os L primeiros n-grams mais frequentes do dicionario
