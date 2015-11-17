@@ -8,10 +8,10 @@ from Util import Util
 
 dirBase = config.dirBase[0]
 n = config.n[0]
-comQuebraEspaco = True
+comQuebraLinha = True
 comComentariosELiterais = False
 
-preparador = Preparador(config.dirBasePreparada, config.extensaoPadrao, n, comQuebraEspaco, comComentariosELiterais)
+preparador = Preparador(config.dirBasePreparada, config.extensaoPadrao, n, comQuebraLinha, comComentariosELiterais)
 
 # Antes de iniciar a preparacao dos arquivos, esvazia o diretorio onde os n-grams ficarao
 Util.esvaziarDiretorio(config.dirBasePreparada)
